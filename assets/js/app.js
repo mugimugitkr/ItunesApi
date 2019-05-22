@@ -1,51 +1,34 @@
-let template = null;
+$(function(){
 
-$(function() {
-  
-  $.get("../../card.html", function(temp) {
-    template = $(temp);
-  })
-
-  $('#search-btn').on('click', function() {
-
-    let searchWord = $('#search-word').val();
-
-    let media = $('#media').text();
-
-    $.ajax({
-      url: 'https://itunes.apple.com/search',
-      type: 'GET',
-      dataType: 'jsonp',
-      data: {
-        term: searchWord,
-        country: 'jp',
-        media: media,
-      },
-    }).done( (data) => {
-
-      $('#result').empty();
-
-      if (data.results.length == 0) {
-        $('#result').append($('<p>0件</p>'));
-      }
-
-      for (item of data.results) {
+    // ボタンがクリックされたら！新しい書き方！
+    // 後からもしbtnの追加あれば、同じ機能が実行される便利さがある
+    $("#search-btn").on ("click" , function(){
         
-        let card = template.clone();
-        card.find('img').attr('src', item.artworkUrl100.replace(/100/g, '600'));
-        card.find('h5').text(item.collectionName);
-        card.find('a').attr('href', item.collectionViewUrl);
-        
-        $('#result').append(card);
-      }
-    }).fail( (data) => {
-      console.log(data);
+        // itunesに曲の検索をしに行く(Ajax）
+        $.ajax({
+            // データ通信するところ
+            // 検索して貼り付ける
+            url : "https://itunes.apple.com/search" ,
+            // GETかPOSTか 
+            type : "GET" ,
+            // 検索結果をどんなフォーマットでほしいのか
+            dataType : "jsonp" ,
+            data : {
+                term :"あいみょん" ,
+                country : "jp" ,
+            }
+
+        }) .done( (data) =>{
+            // 通信成功したとき
+            console.log(data);
+
+        }) .fail ((data) =>{
+            // 通信失敗したとき
+            console.log(error);
+        })
+
+
     })
-  });
 
-  $('.dropdown-item').on('click', function() {
-    let value = $(this).text();
-    $('#media').text(value);
-  });
 
 });
